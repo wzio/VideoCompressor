@@ -4,23 +4,23 @@
 import PackageDescription
 
 let package = Package(
-    name: "VideoCompressor",
-    platforms: [
-        .iOS(.v12), .macOS(.v10_13)
-    ],
-    products: [
-        .library(
-            name: "VideoCompressor",
-            targets: ["VideoCompressor"]),
-    ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "VideoCompressor",
-            dependencies: []),
-        .testTarget(
-            name: "VideoCompressorTests",
-            dependencies: ["VideoCompressor"],
-            resources: []),
-    ]
+  name: "VideoCompressor",
+  platforms: [
+    .iOS(.v12), .macOS(.v10_13),
+  ],
+  products: [
+    .library(
+      name: "VideoCompressor",
+      targets: ["VideoCompressor"])
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "VideoCompressor",
+      dependencies: []),
+    .testTarget(
+      name: "VideoCompressorTests",
+      dependencies: ["VideoCompressor"],
+      resources: []),
+  ]
 )
