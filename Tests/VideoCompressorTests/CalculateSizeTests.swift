@@ -35,6 +35,58 @@ final class CalculateSizeTests: XCTestCase {
       result, CGSize(width: 1280, height: 720), "Should return the target size when it is valid")
   }
 
+  func test720pPreservesAspectRatioAndOrientation() {
+    let cases: [(CGSize, CGSize)] = [
+      (CGSize(width: 1080, height: 1920), CGSize(width: 720, height: 1280)),
+      (CGSize(width: 1440, height: 1080), CGSize(width: 960, height: 720)),
+      (CGSize(width: 1080, height: 1080), CGSize(width: 720, height: 720)),
+      (CGSize(width: 2400, height: 1080), CGSize(width: 1280, height: 576)),
+      (CGSize(width: 1080, height: 2400), CGSize(width: 576, height: 1280)),
+    ]
+
+    for (original, expected) in cases {
+      XCTAssertEqual(test.calculateSize(resolution: .hd720p, originalSize: original), expected)
+    }
+  }
+
+  func test720pDoesNotUpscaleSmallVideos() {
+    for size in [CGSize(width: 640, height: 480), CGSize(width: 480, height: 640)] {
+      XCTAssertEqual(test.calculateSize(resolution: .hd720p, originalSize: size), size)
+    }
+  }
+
+  func testAllPresetsPreserveFourByThreeAspectRatio() {
+    let cases: [(VideoCompressor.VideoResolution, CGSize)] = [
+      (.sd360p, CGSize(width: 480, height: 360)),
+      (.sd480p, CGSize(width: 640, height: 480)),
+      (.hd720p, CGSize(width: 960, height: 720)),
+      (.hd1080p, CGSize(width: 1440, height: 1080)),
+      (.hd1440p, CGSize(width: 1920, height: 1440)),
+      (.uhd2160p, CGSize(width: 2880, height: 2160)),
+      (.uhd4320p, CGSize(width: 3840, height: 2880)),
+    ]
+    for (resolution, expected) in cases {
+      XCTAssertEqual(
+        test.calculateSize(resolution: resolution, originalSize: CGSize(width: 3840, height: 2880)),
+        expected
+      )
+    }
+  }
+
+  func testPresetProducesEvenPixelDimensionsWhenScaling() {
+    let result = test.calculateSize(
+      resolution: .hd720p, originalSize: CGSize(width: 1920, height: 1000))
+    XCTAssertEqual(result, CGSize(width: 1280, height: 666))
+  }
+
+  func testCustomSizeStillUsesExplicitDimensions() {
+    let target = CGSize(width: 640, height: 480)
+    XCTAssertEqual(
+      test.calculateSize(resolution: .custom(target), originalSize: CGSize(width: 1920, height: 1080)),
+      target
+    )
+  }
+
   func testCalculateSizeWhenWidthIsNegative() {
     let originalSize = CGSize(width: 1920, height: 1080)
     let resolution = VideoCompressor.VideoResolution.custom(CGSize(width: -1, height: 720))

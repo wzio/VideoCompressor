@@ -257,6 +257,20 @@ extension VideoCompressor {
       return originalSize
     }
     let targetSize = resolution.pixelSize
+    switch resolution {
+    case .custom:
+      break
+    default:
+      let bounds = originalSize.width < originalSize.height
+        ? CGSize(width: targetSize.height, height: targetSize.width)
+        : targetSize
+      let scale = min(1, bounds.width / originalSize.width, bounds.height / originalSize.height)
+      guard scale < 1 else { return originalSize }
+      return CGSize(
+        width: max(2, floor(originalSize.width * scale / 2) * 2),
+        height: max(2, floor(originalSize.height * scale / 2) * 2)
+      )
+    }
     if targetSize.width >= originalSize.width && targetSize.height >= originalSize.height {
       return originalSize
     }

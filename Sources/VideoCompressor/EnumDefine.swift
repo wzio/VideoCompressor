@@ -131,9 +131,10 @@ extension VideoCompressor {
     ///  Default is nil.
     public var outputPath: URL?
 
-    /// Scale (resize) the input video
-    /// 1. If you need to simply resize your video to a specific size (e.g 320×240), you can use the scale: CGSize(width: 320, height: 240)
-    /// 2. If you want to keep the aspect ratio, you need to specify only one component, either width or height, and set the other component to a number below zero
+    /// Scale (resize) the input video.
+    /// Presets preserve aspect ratio and orientation, fit within their pixel bounds, and never upscale.
+    /// 1. To resize to explicit dimensions (e.g. 320×240), use .custom(CGSize(width: 320, height: 240)).
+    /// 2. For a custom size that keeps the aspect ratio, specify only one component and set the other below zero.
     ///    e.g CGSize(width: 320, height: -1)
     ///    nil, (-, -), .zero will keep original resolution
     public var resolution: VideoResolution?
